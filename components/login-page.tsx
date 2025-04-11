@@ -89,7 +89,7 @@ export function LoginPage() {
                 {step === 'credentials' && 'Enter Your Credentials'}
               </CardTitle>
               <CardDescription className="text-center">
-                {step === 'voice' && "Start by saying 'Hey, I am [your name]'"}
+                {step === 'voice'}
                 {step === 'faceId' && 'Complete facial verification to continue'}
                 {step === 'credentials' && 'Enter your password to access your account'}
               </CardDescription>
