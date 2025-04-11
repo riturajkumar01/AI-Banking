@@ -5,7 +5,7 @@ import {
   Card, CardContent, CardDescription, CardFooter,
   CardHeader, CardTitle
 } from "@/components/ui/card"
-import { Scan, X } from "lucide-react"
+import { Loader, Scan, X } from "lucide-react"
 
 interface FaceIdVerificationProps {
   onClose: () => void
@@ -17,6 +17,7 @@ export function FaceIdVerification({ onClose, onSuccess }: FaceIdVerificationPro
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [step, setStep] = useState<"initial" | "scanning" | "success" | "error">("initial")
   const [scanProgress, setScanProgress] = useState(0)
+  const [loading, setLoading] = useState(false)
   const knownDescriptorsRef = useRef<{ label: string; descriptor: Float32Array }[]>([])
 
   const MODEL_URL = "/models"
@@ -52,6 +53,7 @@ export function FaceIdVerification({ onClose, onSuccess }: FaceIdVerificationPro
 
   const startScan = async () => {
     try {
+      setLoading(true)
       await loadModels()
       await loadKnownFaces()
 
@@ -63,10 +65,12 @@ export function FaceIdVerification({ onClose, onSuccess }: FaceIdVerificationPro
 
       setStep("scanning")
       setScanProgress(0)
+      setLoading(false)
       detectFaceLoop()
     } catch (err) {
       console.error("Error starting scan:", err)
       setStep("error")
+      setLoading(false)
     }
   }
 
@@ -149,7 +153,14 @@ export function FaceIdVerification({ onClose, onSuccess }: FaceIdVerificationPro
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-6 space-y-4">
-          {(step === "scanning" || step === "initial") && (
+          {loading && (
+            <div className="flex items-center justify-center space-x-2 text-primary">
+              <Loader className="h-5 w-5 animate-spin" />
+              <span>Loading models and reference images...</span>
+            </div>
+          )}
+
+          {(step === "scanning" || step === "initial") && !loading && (
             <div className="relative w-full h-64">
               <video ref={videoRef} className="rounded-md w-full h-full object-cover" muted playsInline />
               <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
@@ -175,7 +186,7 @@ export function FaceIdVerification({ onClose, onSuccess }: FaceIdVerificationPro
             </div>
           )}
 
-          {(step === "scanning" || step === "initial") && (
+          {(step === "scanning" || step === "initial") && !loading && (
             <div className="w-full max-w-xs mx-auto">
               <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                 <div
