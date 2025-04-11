@@ -71,7 +71,7 @@ export function VoiceRecognition({ onClose, onSuccess }: VoiceRecognitionProps) 
             </Button>
           </div>
           <CardDescription>
-            {step === "initial" && "Say 'Hey, I am [your name]' to authenticate"}
+            {step === "initial" && "Say to authenticate"}
             {step === "listening" && "Listening..."}
             {step === "processing" && "Processing your voice pattern..."}
             {step === "success" && "Voice recognized!"}
